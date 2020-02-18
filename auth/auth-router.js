@@ -2,14 +2,18 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const Users = require('../users/users-model');
 
+// for endpoints beginning with /api/auth
+
 //Login
-router.post('/', (req,res) => {
-    const {username, password} = req.body;
+router.post('/login', (req,res) => {
+    let {username, password} = req.body;
     
     Users.findBy({username})
+    .first()
     .then(user => {
         if(user && bcrypt.compareSync(password, user.password)) {
-            res.json({message: 'Logged in'})
+            req.session.username = username;
+            res.status(200).json({message: `Welcome ${user.username}!`})
         } else {
             res.status(401).json({message: 'Invalid credentials'})
         }
@@ -20,7 +24,7 @@ router.post('/', (req,res) => {
 })
 
 //Register
-router.post('/', (req, res) => {
+router.post('/register', (req, res) => {
     let user = req.body;
 
     const hash = bcrypt.hashSync(user.password, 10);

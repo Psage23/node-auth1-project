@@ -16,10 +16,10 @@ function find() {
     return db("users").select("id", "username");
 }
 
-function findBy() {
-    return db('users').select('id', 'username', 'password')
+function findBy(filter) {
+    return db('users').where(filter);
 }
 
 function findById(id) {
-    return db('users').select('id', 'username').where({id})
+    return db('users').where({id}).first();
 }
